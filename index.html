@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Alcometer</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      div {margin-bottom: 20px;}
+      label {display: inline-block; width: 80px;}
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      class AlcoApp extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            weight: 89,
+            time: 1,
+            bottles: 3,
+            gender: 'male',
+            promilles: 0
+          }
+        }
+
+        handleSubmit = (event) => {
+          event.preventDefault();
+          const { weight,time,bottles,gender } = this.state;
+          const litres = bottles * 0.33;
+          const burning = weight / 10;
+          let grams = litres * 8 * 4.5;
+          let result = 0;
+       
+          grams = grams - (burning * time);
+          if (gender ==='male') {
+            result = grams / (weight * 0.7);
+          }
+          else {
+            result = grams / (weight * 0.6);
+          }
+
+          result = (result > 0? result : 0); 
+
+          this.setState({promilles: result});
+        }
+
+        handleChange = (event) => {
+          this.setState({[event.target.name]: event.target.value});
+        }
+
+        render() {
+          const {weight,time,bottles,promilles } = this.state;
+          const numbers =[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
+          const options = numbers.map((number,index) =>
+            <option key={index}>{number}</option>
+          );
+          return (
+            <form onSubmit={this.handleSubmit}>
+              <h3>Alcometer</h3>
+              <div>
+                <label>Weight</label>
+                <input type="number" name="weight" value={this.state.weight} onChange={this.handleChange} />
+              </div>
+              <div>
+                <label>Time</label>
+                <select name="time" value={time} onChange={this.handleChange}>
+                  {options}
+                </select>
+              </div>
+              <div>
+                <label>Bottles</label>
+                <select name="bottles" value={bottles} onChange={this.handleChange}>
+                  {options}
+                </select>
+              </div>
+              <div>
+                <label>Gender</label>
+                  <input type="radio" name="gender" value="male" defaultChecked onChange={this.handleChange}/><label>Male</label>
+                  <input type="radio" name="gender" value="female" onChange={this.handleChange}/><label>Female</label>
+              </div>
+              <div>
+                <output>{promilles.toFixed(2)}</output>
+              </div>
+              <button>Calculate</button>
+            </form>
+          )
+        }
+      }
+
+
+      ReactDOM.render(
+        <AlcoApp />,
+        document.getElementById('root')
+      );
+
+    </script>
+  </body>
+</html>
